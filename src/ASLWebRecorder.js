@@ -53,6 +53,8 @@ export default function ASLWebRecorder() {
     } catch (error) {
       console.error(error);
       setStatus("❌ Error uploading video");
+      console.error('Upload failed', error.response?.data || error.message);
+
     }
   };
 
