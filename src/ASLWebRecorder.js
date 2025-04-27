@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import Webcam from "react-webcam";
 import axios from "axios";
-import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
+import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg/dist/esm';
 const ffmpeg = createFFmpeg({
   corePath: "https://unpkg.com/@ffmpeg/core@0.11.0/ffmpeg-core.js", 
   log: true
