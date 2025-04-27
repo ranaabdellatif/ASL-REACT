@@ -9,6 +9,7 @@ export default function ASLWebRecorder() {
   const [videoBlob, setVideoBlob] = useState(null);
   const [status, setStatus] = useState("");
   const [translation, setTranslation] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const startRecording = () => {
     setRecording(true);
@@ -45,8 +46,11 @@ export default function ASLWebRecorder() {
     try {
       const response = await axios.post('https://asl-api-rq4c.onrender.com/upload', formData, {
         headers: { "Content-Type": "multipart/form-data" }
+      },
+      onUploadProgress: (progressEvent) => {
+        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+        console.log(`Upload progress: ${percentCompleted}%`);
       });
-
       const { translation } = response.data;
       setTranslation(translation);
       setStatus("✅ Translation received!");
