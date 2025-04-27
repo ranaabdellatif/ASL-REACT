@@ -1,6 +1,25 @@
 import React, { useRef, useState } from 'react';
 import Webcam from "react-webcam";
 import axios from "axios";
+import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
+const ffmpeg = createFFmpeg({ log: true }); 
+
+async function compressVideo(file) {
+  if (!ffmpeg.isLoaded()) {
+    await ffmpeg.load();
+  }
+  ffmpeg.FS('writeFile', 'input.mp4', await fetchFile(file));
+  await ffmpeg.run(
+    '-i', 'input.mp4',
+    '-vcodec', 'libx264',
+    '-crf', '28',
+    '-preset', 'veryfast',
+    '-vf', 'scale=640:-2',
+    'output.mp4'
+  );
+  const data = ffmpeg.FS('readFile', 'output.mp4');
+  return new Blob([data.buffer], { type: 'video/mp4' });
+}
 
 export default function ASLWebRecorder() {
   const webcamRef = useRef(null);
@@ -38,19 +57,25 @@ export default function ASLWebRecorder() {
 
   const uploadVideo = async () => {
     if (!videoBlob) return;
-    setStatus("Uploading...");
-
-    const formData = new FormData();
-    formData.append("video", videoBlob, "asl_video.webm");
-
+    setStatus("Compressing video...");
+  
     try {
+      const compressedBlob = await compressVideo(videoBlob); // 👈 Compress here
+      console.log('Compressed size:', (compressedBlob.size / 1024 / 1024).toFixed(2), 'MB');
+  
+      const formData = new FormData();
+      formData.append("video", compressedBlob, "asl_video_compressed.mp4"); // 👈 Upload compressed
+  
+      setStatus("Uploading...");
+  
       const response = await axios.post('https://asl-api-rq4c.onrender.com/upload', formData, {
-        headers: { "Content-Type": "multipart/form-data" }
-      },
-      onUploadProgress: (progressEvent) => {
-        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-        console.log(`Upload progress: ${percentCompleted}%`);
+        headers: { "Content-Type": "multipart/form-data" },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          console.log(`Upload progress: ${percentCompleted}%`);
+        }
       });
+  
       const { translation } = response.data;
       setTranslation(translation);
       setStatus("✅ Translation received!");
@@ -58,9 +83,9 @@ export default function ASLWebRecorder() {
       console.error(error);
       setStatus("❌ Error uploading video");
       console.error('Upload failed', error.response?.data || error.message);
-
     }
   };
+  
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-white">
