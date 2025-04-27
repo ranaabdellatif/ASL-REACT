@@ -43,7 +43,7 @@ export default function ASLWebRecorder() {
     formData.append("video", videoBlob, "asl_video.webm");
 
     try {
-      const response = await axios.post('http://127.0.0.1:5000/upload', formData, {
+      const response = await axios.post('https://asl-api-rq4c.onrender.com', formData, {
         headers: { "Content-Type": "multipart/form-data" }
       });
 
