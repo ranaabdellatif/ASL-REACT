@@ -1,28 +1,6 @@
 import React, { useRef, useState } from 'react';
 import Webcam from "react-webcam";
 import axios from "axios";
-import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg/dist/esm';
-const ffmpeg = createFFmpeg({
-  corePath: "https://unpkg.com/@ffmpeg/core@0.11.0/ffmpeg-core.js", 
-  log: true
-});
-
-async function compressVideo(file) {
-  if (!ffmpeg.isLoaded()) {
-    await ffmpeg.load();
-  }
-  ffmpeg.FS('writeFile', 'input.mp4', await fetchFile(file));
-  await ffmpeg.run(
-    '-i', 'input.mp4',
-    '-vcodec', 'libx264',
-    '-crf', '28',
-    '-preset', 'veryfast',
-    '-vf', 'scale=640:-2',
-    'output.mp4'
-  );
-  const data = ffmpeg.FS('readFile', 'output.mp4');
-  return new Blob([data.buffer], { type: 'video/mp4' });
-}
 
 export default function ASLWebRecorder() {
   const webcamRef = useRef(null);
@@ -88,6 +66,7 @@ export default function ASLWebRecorder() {
       console.error('Upload failed', error.response?.data || error.message);
     }
   };
+  
   
 
   return (
