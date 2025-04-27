@@ -9,7 +9,6 @@ export default function ASLWebRecorder() {
   const [videoBlob, setVideoBlob] = useState(null);
   const [status, setStatus] = useState("");
   const [translation, setTranslation] = useState(null);
-  const [isUploading, setIsUploading] = useState(false);
 
   const startRecording = () => {
     setRecording(true);
@@ -38,25 +37,16 @@ export default function ASLWebRecorder() {
 
   const uploadVideo = async () => {
     if (!videoBlob) return;
-    setStatus("Compressing video...");
-  
+    setStatus("Uploading...");
+
+    const formData = new FormData();
+    formData.append("video", videoBlob, "asl_video.webm");
+
     try {
-      const compressedBlob = await compressVideo(videoBlob); // 👈 Compress here
-      console.log('Compressed size:', (compressedBlob.size / 1024 / 1024).toFixed(2), 'MB');
-  
-      const formData = new FormData();
-      formData.append("video", compressedBlob, "asl_video_compressed.mp4"); // 👈 Upload compressed
-  
-      setStatus("Uploading...");
-  
       const response = await axios.post('https://asl-api-rq4c.onrender.com/upload', formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-        onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-          console.log(`Upload progress: ${percentCompleted}%`);
-        }
+        headers: { "Content-Type": "multipart/form-data" }
       });
-  
+
       const { translation } = response.data;
       setTranslation(translation);
       setStatus("✅ Translation received!");
@@ -64,10 +54,9 @@ export default function ASLWebRecorder() {
       console.error(error);
       setStatus("❌ Error uploading video");
       console.error('Upload failed', error.response?.data || error.message);
+
     }
   };
-  
-  
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-white">
