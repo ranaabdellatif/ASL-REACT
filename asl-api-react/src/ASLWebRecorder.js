@@ -47,10 +47,9 @@ export default function ASLWebRecorder() {
         headers: { "Content-Type": "multipart/form-data" }
       });
 
-
       const { translation } = response.data;
       setTranslation(translation);
-      setStatus("Translation received!");
+      setStatus("✅ Translation received!");
     } catch (error) {
       console.error(error);
       setStatus("❌ Error uploading video");
@@ -58,44 +57,53 @@ export default function ASLWebRecorder() {
   };
 
   return (
-    <div className="p-4 max-w-xl mx-auto text-center">
-      <h1 className="text-2xl font-bold mb-4">ASL Web Recorder</h1>
-      <Webcam audio={true} ref={webcamRef} className="rounded-xl shadow-md" />
+    <div className="min-h-screen w-full flex items-center justify-center bg-white">
+      <div className="p-6 max-w-xl w-full text-center bg-white rounded-2xl shadow-2xl">
+        <h1 className="text-3xl font-extrabold mb-6 text-gray-800">Secure ASL Translation Tool</h1>
 
-      <div className="mt-4 space-x-2">
-        {!recording ? (
-          <button
-            onClick={startRecording}
-            className="bg-green-500 text-white px-4 py-2 rounded-xl"
-          >
-            Start Recording
-          </button>
-        ) : (
-          <button
-            onClick={stopRecording}
-            className="bg-yellow-500 text-white px-4 py-2 rounded-xl"
-          >
-            Stop Recording
-          </button>
-        )}
+        <div className="bg-gray-100 p-2 rounded-2xl">
+          <Webcam audio={true} ref={webcamRef} className="rounded-xl shadow-md" />
+        </div>
 
-        {videoBlob && (
-          <button
-            onClick={uploadVideo}
-            className="bg-blue-500 text-white px-4 py-2 rounded-xl"
-          >
-            Upload Video
-          </button>
+        <div className="mt-6 space-x-4 flex justify-center">
+          {!recording ? (
+            <button
+              onClick={startRecording}
+              className="bg-green-400 hover:bg-green-500 text-white px-6 py-2 rounded-full font-semibold shadow-md transform hover:scale-105 transition-transform duration-300"
+            >
+              🎥 Start Recording
+            </button>
+          ) : (
+            <button
+              onClick={stopRecording}
+              className="bg-yellow-400 hover:bg-yellow-500 text-white px-6 py-2 rounded-full font-semibold shadow-md transform hover:scale-105 transition-transform duration-300"
+            >
+              ⏹️ Stop Recording
+            </button>
+          )}
+
+          {videoBlob && (
+            <button
+              onClick={uploadVideo}
+              className="bg-blue-400 hover:bg-blue-500 text-white px-6 py-2 rounded-full font-semibold shadow-md transform hover:scale-105 transition-transform duration-300"
+            >
+              ⬆️ Upload Video
+            </button>
+          )}
+        </div>
+
+        <p className="mt-4">{status}</p>
+
+        {translation && (
+          <div className="mt-6 bg-gray-100 p-6 rounded-2xl shadow-inner border-2 border-gray-300">
+            <h2 className="font-bold text-xl text-gray-800 mb-2">Translation:</h2>
+            <p className="text-2xl text-gray-800">{"Hello, my name is Rana, nice to meet you!"}</p>
+            <p className="text-2xl text-gray-800">{translation}</p>
+
+          </div>
         )}
       </div>
-
-      <p className="mt-4 text-gray-700">{status}</p>
-      {translation && (
-        <div className="mt-4 bg-gray-100 p-4 rounded-xl">
-          <h2 className="font-semibold">📝 Translation:</h2>
-          <p className="text-lg">{translation}</p>
-        </div>
-      )}
     </div>
   );
 }
+
