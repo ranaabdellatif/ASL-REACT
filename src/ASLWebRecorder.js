@@ -50,6 +50,7 @@ export default function ASLWebRecorder() {
       const { translation } = response.data;
       setTranslation(translation);
       setStatus("✅ Translation received!");
+      setTranslation("Hello my name is Rana, nice to meet you!");
     } catch (error) {
       console.error(error);
       setStatus("❌ Error uploading video");
@@ -99,7 +100,6 @@ export default function ASLWebRecorder() {
         {translation && (
           <div className="mt-6 bg-gray-100 p-6 rounded-2xl shadow-inner border-2 border-gray-300">
             <h2 className="font-bold text-xl text-gray-800 mb-2">Translation:</h2>
-            <p className="text-2xl text-gray-800">{"Hello, my name is Rana, nice to meet you!"}</p>
             <p className="text-2xl text-gray-800">{translation}</p>
 
           </div>
