@@ -6,7 +6,7 @@ import { AuthProvider } from './AuthContext';
 import LoginForm from './LoginForm';
 import SignupForm from './SignupForm';
 import AuthenticatedRoute from './AuthenticatedRoute';
-import ASLWebRecorder from './src/ASLWebRecorder.js';
+import ASLWebRecorder from './ASLWebRecorder.js';
 
 function App() {
   return (
