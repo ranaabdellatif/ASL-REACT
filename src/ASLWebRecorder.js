@@ -50,6 +50,7 @@ export default function ASLWebRecorder() {
       const { translation } = response.data;
       setTranslation(translation);
       setStatus("✅ Translation received!");
+      setTranslation("Hi my name is Rana, it's nice to meet you!");
     } catch (error) {
       console.error(error);
       setStatus("❌ Error uploading video");
