@@ -42,3 +42,67 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
+// LoginForm.jsx
+import React, { useState, useContext } from 'react';
+import { AuthContext } from './AuthContext';
+
+const LoginForm = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const { login } = useContext(AuthContext);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await login(email, password);
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <h2>Login</h2>
+      <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required />
+      <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required />
+      <button type="submit">Login</button>
+    </form>
+  );
+};
+
+export default LoginForm;
+
+// SignupForm.jsx
+import React, { useState, useContext } from 'react';
+import { AuthContext } from './AuthContext';
+
+const SignupForm = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const { signup } = useContext(AuthContext);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await signup(email, password);
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <h2>Sign Up</h2>
+      <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required />
+      <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required />
+      <button type="submit">Sign Up</button>
+    </form>
+  );
+};
+
+export default SignupForm;
+
+// AuthenticatedRoute.jsx
+import React, { useContext } from 'react';
+import { AuthContext } from './AuthContext';
+import { Navigate } from 'react-router-dom';
+
+const AuthenticatedRoute = ({ children }) => {
+  const { user } = useContext(AuthContext);
+  return user ? children : <Navigate to="/login" />;
+};
+
+export default AuthenticatedRoute;
